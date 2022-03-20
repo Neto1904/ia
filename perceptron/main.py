@@ -5,8 +5,8 @@ test_dataset = []
 
 
 def load_data():
-    training_file_path = './perceptron/datasets/treinamento.txt'
-    test_file_path = './perceptron/datasets/teste.txt'
+    training_file_path = './datasets/training.txt'
+    test_file_path = './datasets/test.txt'
     training_file_data = open(training_file_path, 'r')
     test_file_data = open(test_file_path, 'r')
 
@@ -33,10 +33,12 @@ def main():
     for _ in range(5):
         perceptron.train(training_dataset)
 
-    for element in test_dataset:
-        result = perceptron.test(element)
-        test_results.append(result)
-    alltests.append(test_results)
+    for _ in range(5):
+        for element in test_dataset:
+            result = perceptron.test(element)
+            test_results.append(result)
+        alltests.append(test_results)
+        test_results = []
     print(alltests)
 
 
