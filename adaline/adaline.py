@@ -8,7 +8,7 @@ class Adaline:
         self.learning_rate = learning_rate
         self.precision_rate = precision_rate
 
-    def train(self, X):
+    def train(self, X, training_iteration=0):
         input_array_size = len(X[0]) - 1
         [self.weights] = np.random.rand(1, input_array_size)
         msq_error_prev = 9999999999
@@ -17,6 +17,7 @@ class Adaline:
         epochs = 0
         epochs_array = []
         errors_array = []
+        print(epochs_array)
         while(np.absolute(msq_error_current - msq_error_prev) > self.precision_rate):
             epochs += 1
             epochs_array.append(epochs)
@@ -35,8 +36,8 @@ class Adaline:
             errors_array.append(msq_error_current)
         print('Final weigths:',  self.weights)
         print('Epochs:',  epochs)
-        self.plot(epochs_array, errors_array, 'Epochs', 'Error',
-                  'Square mean error by epochs of training')
+        title = f'Square mean error by epochs of training - Training {training_iteration}'
+        self.plot(epochs_array, errors_array, 'Epochs', 'Error', title)
 
     def test(self, x):
         result = np.inner(x, self.weights)
@@ -46,8 +47,10 @@ class Adaline:
             return 'A'
 
     def plot(self, x, y, xlabel, ylabel, title):
-        charts.plot(x, y)
-        charts.xlabel(xlabel)
-        charts.ylabel(ylabel)
-        charts.title(title)
-        charts.savefig(f'./charts/{str(uuid.uuid4())}.png')
+        fig, ax = charts.subplots()
+        ax.plot(x, y)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.set_title(title)
+        charts.draw()
+        fig.savefig(f'./charts/{str(uuid.uuid4())}.png')
