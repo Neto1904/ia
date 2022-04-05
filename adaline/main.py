@@ -30,8 +30,8 @@ def main():
     adaline = Adaline()
     alltests = []
     test_results = []
-    for _ in range(5):
-        adaline.train(training_dataset)
+    for i in range(5):
+        adaline.train(training_dataset, i)
 
     for _ in range(5):
         for element in test_dataset:
