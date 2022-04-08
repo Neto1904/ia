@@ -22,6 +22,7 @@ class MLPerceptron:
             prev_msq_error = cur_msq_error
             for x, y in zip(inputs, expected):
                 self.compute_layers_result(x)
+                self.update_weights(y)
 
     def build(self, inputs):
         input_length = len(inputs[0])
@@ -52,13 +53,19 @@ class MLPerceptron:
         return np.array([sigmoid_derivative(x) for x in array])
 
     def update_weights(self, expected):
-        for layer in reversed(enumerate(self.neurons_layer)):
+        for layer in reversed(range(len(self.neurons_layer))):
             if(layer == len(self.neurons_layer) - 1):
                 derivative = self.sigmoid_derivative(self.w_sums[layer])
                 self.gradients[layer] = (np.subtract(np.array(expected), np.array(self.layers_outputs[layer]))) * derivative
+                new_gradient = []
+                for g in self.gradients[layer]:
+                    new_gradient.append([g])
+                self.gradients[layer] = new_gradient
                 gradient_lr = np.multiply(self.gradients[layer], self.learning_rate)
-                update_matrix = np.multiply(self.layers_outputs[layer - 1], gradient_lr)
+                update_matrix = np.multiply(gradient_lr, self.layers_outputs[layer - 1])
+                print(self.weights[layer], 'before')
                 self.weights[layer] = np.add(self.weights[layer], update_matrix)
+                print(self.weights[layer], 'after')
             elif(layer == 0):
                 print('Needs to be implemented')
             else:
