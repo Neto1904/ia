@@ -72,6 +72,10 @@ class MLPerceptron:
                 derivative = self.sigmoid_derivative(self.w_sums[layer])
                 gradient_factor = np.multiply(self.gradients[layer + 1], self.weights[layer + 1])
                 self.gradients[layer] = gradient_factor * derivative
+                new_gradient = []
+                for g in self.gradients[layer]:
+                    new_gradient.append([g])
+                self.gradients[layer] = new_gradient
                 gradient_lr = np.multiply(self.gradients[layer], self.learning_rate)
                 update_matrix = np.multiply(self.layers_outputs[layer - 1], gradient_lr)
                 self.weights[layer] = np.add(self.weights[layer], update_matrix)
