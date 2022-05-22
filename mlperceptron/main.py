@@ -7,15 +7,16 @@ from mlperceptron import MLPerceptron
 
 
 def load_data():
-    file_location = os.path.join('datasets', '*.dat')
-    filenames = glob(file_location)
-    for f in filenames:
+    files_path = os.path.join('datasets', '*.dat')
+    files = glob(files_path)
+    mlp = MLPerceptron([4, 4, 2])
+    for f in files:
+        print(f)
         outfile = open(f, 'r')
         lines = outfile.read()
         inputs = []
         expected = []
         data = lines.split('@data')[1]
-        mlp = MLPerceptron([3, 3, 2])
         for line in data.strip().split('\n'):
             line_data = []
             for element in line.strip().split(','):
@@ -23,13 +24,16 @@ def load_data():
                     line_data.append(float(element.strip()))
                 else:
                     expected.append(translate_pattern(element.strip()))
-
             inputs.append(line_data)
-        inputs_df = pd.DataFrame(np.array(inputs), columns=[
-            'slen', 'swid', 'plen', 'pwid'])
+        inputs_df = pd.DataFrame(np.array(inputs), columns=['slen', 'swid', 'plen', 'pwid'])
         normalize_data(inputs_df)
-        mlp.train(inputs, expected)
+        input_list = inputs_df.values.tolist()
+        if('tra' in f):
+            mlp.fit(input_list, expected)
+        else:
+            mlp.test(input_list, expected)
         outfile.close()
+
 
 
 def normalize_data(df):
