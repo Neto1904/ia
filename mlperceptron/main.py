@@ -9,7 +9,7 @@ from mlperceptron import MLPerceptron
 def load_data():
     files_path = os.path.join('datasets', '*.dat')
     files = glob(files_path)
-    mlp = MLPerceptron([4, 4, 2])
+    mlp = MLPerceptron([3, 3, 2])
     for f in files:
         print(f)
         outfile = open(f, 'r')

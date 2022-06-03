@@ -84,6 +84,7 @@ class Fuzzy:
         self.rules.append(new_rule)
 
     def get_activated_rules(self, membership_groups, values):
+        print('Values:', values)
         temperature_membership = membership_groups[0]
         volume_membership = membership_groups[1]
         rule_keys = []
@@ -95,12 +96,23 @@ class Fuzzy:
                 rule_keys.append(f'{i}{j}')
                 local_min = np.array([temperature_membership[i], volume_membership[j]])
                 min_values.append(local_min.min())
+        self.get_activated_areas(rule_keys, min_values)
+        
+
+    def get_activated_areas(self, rule_keys, min_values):
+        pressure_value = 0
         for i in range(len(rule_keys)):
             rule = self.find_rule_by_key(rule_keys[i])
-            print(values, "activated", rule, min_values[i])
-        print(membership_groups)
-        print(min_values.index(np.array(min_values).max()))
-        
+            group = rule['output']
+            print("activated rule:", rule, min_values[i])
+            print(self.result_set[f'{group}_limits'])
+            x1 = self.result_set[f'{group}_limits'][0]
+            x2 = self.result_set[f'{group}_limits'][1]
+            if(min_values[i] == np.asarray(min_values).max()):
+                pressure_value = (x2 + x1)/2
+        print('Infered pressure value:', pressure_value)
+        print("--------------------------------------------")
+
 
     def find_rule_by_key(self, key):
         for rule in self.rules:
@@ -110,5 +122,6 @@ def find_nearest_index(array, value):
     array = np.asarray(array)
     index = (np.abs(array - value)).argmin()
     return index
+
 
         

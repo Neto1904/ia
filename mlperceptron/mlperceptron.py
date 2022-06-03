@@ -25,6 +25,7 @@ class MLPerceptron:
         self.cur_msq_error = 0
         # Build the network
         self.build(inputs)
+        print(self.weights)
         while(np.absolute(self.cur_msq_error - self.prev_msq_error) > self.precision):
             self.prev_msq_error = self.cur_msq_error
             msq_error = 0
@@ -33,12 +34,12 @@ class MLPerceptron:
                 self.update_weights(y, x)
                 msq_error += self.calculate_error(y)
             self.cur_msq_error = msq_error / len(inputs)
-            print(self.cur_msq_error)
+        print(self.weights)
 
     def test(self, inputs, expected):
         for x, y in zip(inputs, expected):
             self.compute_layers_result(x, True)
-            print('result', np.round(self.layers_outputs[-1]), y)
+            print('result', self.layers_outputs[-1], y)
 
     def build(self, inputs):
         input_length = len(inputs[0])
@@ -87,8 +88,7 @@ class MLPerceptron:
             if(layer == len(self.neurons_layer) - 1):
                 # Calculate gradient for the last layer
                 derivative = self.sigmoid_derivative(self.w_sums[layer])
-                difference = np.subtract(
-                    np.array(expected), np.array(self.layers_outputs[layer]))
+                difference = np.subtract(np.array(expected), np.array(self.layers_outputs[layer]))
                 # (dj - Y(i)) * g´(I(i))
                 gradients = np.multiply(difference, derivative)
                 self.gradients[layer] = self.format_gradients(gradients)
@@ -101,21 +101,16 @@ class MLPerceptron:
             else:
                 # Calculate gradient for the previous layers
                 derivative = self.sigmoid_derivative(self.w_sums[layer])
-                gradient_factor = np.multiply(
-                    self.gradients[layer + 1], self.weights[layer + 1])
-                gradients = np.multiply(
-                    self.gradient_by_neuron(gradient_factor), derivative)
+                gradient_factor = np.multiply(self.gradients[layer + 1], self.weights[layer + 1])
+                gradients = np.multiply(self.gradient_by_neuron(gradient_factor), derivative)
                 self.gradients[layer] = self.format_gradients(gradients)
-                gradient_lr = np.multiply(
-                    self.gradients[layer], self.learning_rate)
+                gradient_lr = np.multiply(self.gradients[layer], self.learning_rate)
                 update_matrix = []
                 if(layer == 0):
                     update_matrix = np.multiply(inputs, gradient_lr)
                 else:
-                    update_matrix = np.multiply(
-                        self.layers_outputs[layer - 1], gradient_lr)
-                self.weights[layer] = np.add(
-                    self.weights[layer], update_matrix)
+                    update_matrix = np.multiply(self.layers_outputs[layer - 1], gradient_lr)
+                self.weights[layer] = np.add(self.weights[layer], update_matrix)
 
     def format_gradients(self, gradients):
         # Format gradients to be able to multiply them by the layer outputs
